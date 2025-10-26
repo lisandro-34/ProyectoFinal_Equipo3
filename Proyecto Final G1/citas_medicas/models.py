@@ -2,49 +2,45 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # =======================================================
-# Definición de Opciones (fuera de las clases)
+# 1. Entidad: Paciente
 # =======================================================
+class Paciente(models.Model):
+    """Define los datos personales del paciente."""
+    nombre = models.CharField(max_length=100)
+    apellido = models.CharField(max_length=100)
+    fecha_nacimiento = models.DateField()
+    telefono = models.CharField(max_length=15)
+    email = models.EmailField(unique=True)
 
-# 1. ESTADOS para el Modelo Medico
-# (Asumiendo que tienes un modelo Especialidad o quieres agregarlo)
+    def __str__(self):
+        # Muestra el nombre completo
+        return f"Paciente: {self.nombre} {self.apellido}"
+
+    class Meta:
+        # Ordenar por apellido y luego por nombre
+        ordering = ['apellido', 'nombre']
+
+
+# =======================================================
+# 2. Entidad: Especialidad (para Médicos)
+# =======================================================
 class Especialidad(models.Model):
+    """Define las especialidades médicas."""
     nombre = models.CharField(max_length=50, unique=True)
     
     def __str__(self):
         return self.nombre
 
-
-# 2. ESTADOS para el Modelo Cita
-ESTADOS_CITA = (
-    ('P', 'Pendiente'),
-    ('C', 'Confirmada'),
-    ('R', 'Realizada'),
-    ('X', 'Cancelada'),
-)
+    class Meta:
+        verbose_name_plural = "Especialidades"
 
 
 # =======================================================
-# 3. Entidad: Paciente
-# =======================================================
-class Paciente(models.Model):
-    # Relación 1:1 con Usuario
-    usuario = models.OneToOneField(User, on_delete=models.CASCADE)
-    
-    nombre = models.CharField(max_length=100)
-    apellido = models.CharField(max_length=100)
-    dni = models.CharField(max_length=20, unique=True)
-    # Ejemplo de campo con blank=True, null=True
-    telefono = models.CharField(max_length=15, blank=True, null=True)
-    
-    def __str__(self):
-        return f"{self.nombre} {self.apellido}"
-
-
-# =======================================================
-# 4. Entidad: Medico
+# 3. Entidad: Medico
 # =======================================================
 class Medico(models.Model):
-    # Relación 1:1 con Usuario
+    """Define los datos de un médico y su relación con un usuario del sistema."""
+    # Relación 1:1 con Usuario (para login y permisos)
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
     
     nombre = models.CharField(max_length=100)
@@ -55,17 +51,41 @@ class Medico(models.Model):
     especialidades = models.ManyToManyField(Especialidad)
     
     def __str__(self):
-        return f"{self.nombre} {self.apellido}"
+        return f"Dr. {self.nombre} {self.apellido}"
+
+    class Meta:
+        verbose_name_plural = "Médicos"
 
 
 # =======================================================
-# 5. Entidad: Cita
+# 4. Entidad: Cita
 # =======================================================
+
+# Opciones de estado de la cita
+ESTADOS_CITA = (
+    ('P', 'Pendiente'),
+    ('C', 'Confirmada'),
+    ('R', 'Realizada'),
+    ('X', 'Cancelada'),
+)
+
 class Cita(models.Model):
-    # **CAMPOS OBLIGATORIOS Y RELACIONES**
-    # Las claves foráneas se refieren a las clases definidas arriba
-    paciente = models.ForeignKey(Medico, on_delete=models.CASCADE)
-    medico = models.ForeignKey(Medico, on_delete=models.CASCADE)
+    """Define una cita médica relacionando un paciente y un médico."""
+    
+    # Clave Foránea CORRECTA: Un Paciente tiene Muchas Citas (1:N)
+    # IMPORTANTE: Se apunta al modelo Paciente, NO al modelo Medico
+    paciente = models.ForeignKey(
+        Paciente, 
+        on_delete=models.CASCADE,
+        related_name='citas_como_paciente' # Nombre de la relación inversa
+    ) 
+    
+    # Clave Foránea: Un Médico tiene Muchas Citas (1:N)
+    medico = models.ForeignKey(
+        Medico, 
+        on_delete=models.CASCADE,
+        related_name='citas_asignadas' # Nombre de la relación inversa
+    )
     
     fecha_hora = models.DateTimeField() 
     
@@ -76,7 +96,11 @@ class Cita(models.Model):
         default='P',
     )
     
-    # **MÉTODO __str__ CORREGIDO**
     def __str__(self):
-        # Para evitar errores, accedemos al nombre directamente
-        return f"Cita de {self.paciente.nombre} con {self.medico.nombre} el {self.fecha_hora.date()}"
+        # Muestra un resumen de la cita
+        return f"Cita de {self.paciente.apellido} con Dr. {self.medico.apellido} el {self.fecha_hora.strftime('%d/%m/%Y a las %H:%M')}"
+
+    class Meta:
+        # Garantiza que no haya dos citas para el mismo médico a la misma hora exacta
+        unique_together = ('medico', 'fecha_hora')
+ordering = ('fecha_hora',)

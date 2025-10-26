@@ -74,32 +74,19 @@ WSGI_APPLICATION = 'mi_proyecto.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 DATABASES = {
     'default': {
-        # 1. Motor del Backend
-        'ENGINE': 'mssql', 
+        # ¡IMPORTANTE! Cambia esto al backend de SQL Server
+        'ENGINE':  'sql_server.pyodbc',
         
-        # 2. Nombre de la base de datos que ya existe o deseas usar
-        'NAME': 'ProyectoBD',
-        
-        # 3. Dirección del servidor (ej. 'localhost', '127.0.0.1', o 'SERVER\INSTANCIA')
+        # Usa el nombre de tu base de datos y la configuración de Windows Auth
+        'NAME': 'ProyectoBDl', 
         'HOST': 'LISANDRO_DIAZ', 
-        
-        # 4. Puerto (1433 es el predeterminado para SQL Server)
         'PORT': '1433', 
-        
-        
         'USER': '', 
         'PASSWORD': '', 
         
-        # 7. Opciones de Conexión (Importante: define el driver ODBC)
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
-        
-            # Si usas Autenticación de Windows, puedes usar:
-            # 'driver': 'ODBC Driver 17 for SQL Server',
-            # 'Trusted_Connection': 'yes',
-          'Trusted_Connection': 'yes',
-          'auto_convert_date_and_time': True,
-
+            'Trusted_Connection': 'yes',
         },
     }
 }

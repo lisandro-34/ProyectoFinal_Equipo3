@@ -20,3 +20,20 @@ from django.urls import path
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
+from django.urls import path
+from . import views
+
+# Nombres de rutas que usaremos en las plantillas y redirects
+urlpatterns = [
+    # READ: URL para listar todos los pacientes
+    path('', views.paciente_lista, name='paciente_lista'), 
+    
+    # CREATE: URL para crear un nuevo paciente (sin pk)
+    path('nuevo/', views.paciente_form, name='paciente_nuevo'), 
+    
+    # UPDATE: URL para editar un paciente existente (con pk)
+    path('editar/<int:pk>/', views.paciente_form, name='paciente_editar'), 
+    
+    # DELETE: URL para eliminar un paciente
+    path('eliminar/<int:pk>/', views.paciente_eliminar, name='paciente_eliminar'), 
+]
