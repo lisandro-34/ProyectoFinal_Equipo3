@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Paciente{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Eliminar Paciente</h1>
+
+<div class="alert alert-warning" role="alert">
+    ¿Estás seguro que deseas eliminar a **{{ paciente.nombre }} {{ paciente.apellido }}**?
+    Esta acción es irreversible.
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sí, Eliminar</button>
+    <a href="{% url 'paciente_lista' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}
