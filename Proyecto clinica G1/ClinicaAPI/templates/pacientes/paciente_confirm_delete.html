@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Paciente{% endblock %}
+
+{% block content %}
+<h2>🗑️ Confirmar Eliminación</h2>
+<div class="alert alert-danger" role="alert">
+    ¿Estás seguro de que quieres eliminar al paciente <strong>{{ paciente.nombres }} {{ paciente.apellidos }}</strong> (Documento: {{ paciente.numero_documento }})?
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sí, Eliminar</button>
+    <a href="{% url 'pacientes:listar_pacientes' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

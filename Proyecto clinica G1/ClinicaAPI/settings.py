@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
      'rest_framework', 'core.apps.CoreConfig', 
+     'ClinicaAPI',
 ]
 
 MIDDLEWARE = [
@@ -50,7 +51,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'ClinicaAPI.urls'
+ROOT_URLCONF = 'ClinicaAPI.project_urls'
 
 TEMPLATES = [
     {
@@ -76,30 +77,24 @@ WSGI_APPLICATION = 'ClinicaAPI.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'sql_server.pyodbc',
-        
-        # ⚠️ IMPORTANTE: Nombre de la BD Corregido
+        'ENGINE': 'mssql',
         'NAME': 'ProyectoFinalDBG1', 
-        
-        # Se dejan el HOST y PORT por si son requeridos por Django
         'HOST': 'LISANDRO_DIAZ', 
         'PORT': '1433', 
-        
-        # Credenciales del usuario SQL Server (TestAPIUser)
-        'USER': 'TestAPIUser',       
-        'PASSWORD': 'P@ssw0rd2025', 
-        
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
             'host_is_server': True,
-            # AGREGAR ESTA LÍNEA para FORZAR la autenticación SQL y evitar Windows Auth
-            'Authentication': 'SqlPassword', 
+          
+            'trusted_connection': 'yes',
         },
-        
-        # Esta opción ayuda a evitar reconexiones que revierten a Windows Auth
-        'CONN_MAX_AGE': 0, 
     }
 }
+
+
+
+
+
+
 # Password validation
 # https://docs.djangoproject.com/en/5.2/re/settings/#auth-password-validators
 
@@ -140,3 +135,4 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+app_name = 'pacientes' # Namespace para esta app

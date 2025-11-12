@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Cita{% endblock %}
+
+{% block content %}
+<h2> Confirmar Eliminación</h2>
+<div class="alert alert-danger" role="alert">
+    ¿Estás seguro de que quieres cancelar la cita de <strong>{{ cita.paciente }}</strong> con el <strong>{{ cita.medico }}</strong> el día {{ cita.fecha_cita|date:"Y-m-d" }}?
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sí, Eliminar</button>
+    <a href="{% url 'citas:listar_citas' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

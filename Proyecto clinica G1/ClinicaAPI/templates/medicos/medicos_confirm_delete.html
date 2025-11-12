@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Médico{% endblock %}
+
+{% block content %}
+<h2>🗑️ Confirmar Eliminación</h2>
+<div class="alert alert-danger" role="alert">
+    ¿Estás seguro de que quieres eliminar al médico <strong>{{ medico.nombres }} {{ medico.apellidos }}</strong> (Licencia: {{ medico.licencia_medica }})?
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sí, Eliminar</button>
+    <a href="{% url 'medicos:listar_medicos' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}
